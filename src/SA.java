@@ -82,7 +82,7 @@ public class SA {
 	}
 	
 	/**
-	 * 通过交换两个点，产生新解
+	 * 反序列
 	 * @param old
 	 */
 	public ArrayList<Integer> SortTwo(ArrayList<Integer>solution)
@@ -237,7 +237,7 @@ public class SA {
 		ArrayList<Integer> newSolution;
 		Random random=new Random();
 		int num=random.nextInt(3);
-		/*
+		
 		if(num==0)
 			newSolution=ReverseAndShiftCity(solution);
 		else if(num==1)
@@ -246,9 +246,9 @@ public class SA {
 			newSolution=SortTwo(solution);
 		else
 			newSolution=ExChangeTwo(solution);
-		*/
 		
-		newSolution=ShiftCity(solution);
+		
+		//newSolution=ReverseAndShiftCity(solution);
 		double E2=DistanceCost(newSolution);
 		double diff=E1-E2;
 		if(diff>0)
