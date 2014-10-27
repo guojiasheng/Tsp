@@ -17,6 +17,10 @@ public class SA {
 	Util tool=new Util();
 	CityPoint []city;
 	
+	int num=0;
+	
+	public ArrayList<Integer>contain=new ArrayList<Integer>();
+	
 	double dis=0;
 	public SA(double T,double speed)
 	{
@@ -39,7 +43,8 @@ public class SA {
 	
 		solution.remove(begin);
 		Collections.shuffle(solution);
-		
+		//System.out.println("初始解：");
+		//System.out.println(solution);
   
 	//	solution=tool.GetBest("E://a280.opt.tour");
 	}
@@ -50,6 +55,7 @@ public class SA {
 	public void UpdateT()
 	{
 		T=T*Speed;
+	
 	}
 	
 	/**
@@ -67,6 +73,7 @@ public class SA {
 		int y=random.nextInt(CityNum-1);
 		while(x==y)
 			y=random.nextInt(CityNum-1);
+		
 		
 		int temp=newSolution.get(x);
 		newSolution.set(x, y);
@@ -87,6 +94,10 @@ public class SA {
 		Random random=new Random();
 		int x=random.nextInt(CityNum-1);
 		int y=random.nextInt(CityNum-1);
+		
+		num++;
+	//	System.out.print(x+"  "+y+";");
+		
 		while(x==y)
 			y=random.nextInt(CityNum-1);
 		if(x>y)
@@ -107,6 +118,92 @@ public class SA {
 		}
 		return newSolution;
 	}
+	
+	
+	/**
+	 * 单城市移位
+	 * @param solution
+	 * @return
+	 */
+	public ArrayList<Integer> ShiftCity(ArrayList<Integer>solution)
+	{
+		ArrayList<Integer>newSolution=new ArrayList<Integer>();
+		for(int temp:solution)
+			newSolution.add(temp);
+	
+		Random random=new Random();
+		int x=random.nextInt(CityNum-1);    //要移的位置
+		int y=random.nextInt(CityNum-1);   //移到的位置
+
+		while(x==y)
+			y=random.nextInt(CityNum-1);
+		if(x<y)
+		{
+			int xfirst=newSolution.get(x);
+			for(int i=x;i<y;i++)
+			{
+				newSolution.set(i, newSolution.get(i+1));
+			}
+			newSolution.set(y,xfirst);
+		}
+		else
+		{
+			int xfirst=newSolution.get(x);
+			for(int i=x;i<y;i++)
+			{
+				newSolution.set(i, newSolution.get(i-1));
+			}
+			newSolution.set(y,xfirst);
+		}
+		return newSolution;
+	}
+	
+	
+	/**
+	 * 反移位
+	 * @param solution
+	 * @return
+	 */
+	public ArrayList<Integer> ReverseAndShiftCity(ArrayList<Integer>solution)
+	{
+		ArrayList<Integer>newSolution=new ArrayList<Integer>();
+		for(int temp:solution)
+			newSolution.add(temp);
+	
+		Random random=new Random();
+		int x=random.nextInt(CityNum-1);
+		int y=random.nextInt(CityNum-1);
+		while(x==y)
+			y=random.nextInt(CityNum-1);
+		if(x>y)
+		{
+			int temp=y;
+			y=x;
+			x=temp;
+		}
+		
+		List<Integer> temp=new ArrayList<Integer>();
+		for(int i=x;i<=y;i++)
+		  temp.add(newSolution.get(i));
+		//Collections.reverse(temp);
+
+		int z=random.nextInt(CityNum-y-1)+y;
+
+				for(int i=y+1;i<=z;i++)
+				{
+					newSolution.set(x, newSolution.get(i));
+					x++;
+				}
+				for(int j=0;j<temp.size();j++)
+				{
+					newSolution.set(z, temp.get(j));
+					z--;
+				}
+
+		
+		return newSolution;
+	}
+	
 	
 	
 	/**
@@ -132,11 +229,26 @@ public class SA {
 	 */
 	public void TspAS()
 	{
+		dis=DistanceCost(solution);
 		while(T>1)
-		{
+		{		
 		double E1=DistanceCost(solution);
-		dis=E1;
-		ArrayList<Integer> newSolution=SortTwo(solution);
+		System.out.println(dis);
+		ArrayList<Integer> newSolution;
+		Random random=new Random();
+		int num=random.nextInt(3);
+		/*
+		if(num==0)
+			newSolution=ReverseAndShiftCity(solution);
+		else if(num==1)
+			newSolution=ShiftCity(solution);
+		else if(num==2)
+			newSolution=SortTwo(solution);
+		else
+			newSolution=ExChangeTwo(solution);
+		*/
+		
+		newSolution=ShiftCity(solution);
 		double E2=DistanceCost(newSolution);
 		double diff=E1-E2;
 		if(diff>0)
@@ -146,29 +258,28 @@ public class SA {
 		}
 		else
 		{
-	
 			 double probability=Math.pow(E,diff/T);
-			 Random random=new Random();
 			 double x=random.nextDouble();
 			 if(probability>random.nextDouble())
 			 {
 				 solution=newSolution;
 				 dis=E2;
 			 }
-			
+		
 		}
 		UpdateT();
 		}
 		
+		
 	}
 	
-	public void Best(String file)
+	public double Best(String file)
 	{
 		ArrayList <Integer>list=new ArrayList<Integer>();
 		list=tool.GetBest(file);
 		list.remove(begin);
-		System.out.println(list);
-		System.out.println(DistanceCost(list));
+		System.out.println("最优代价："+DistanceCost(list));
+	    return DistanceCost(list);
 	}
 	
 	/**
@@ -176,16 +287,36 @@ public class SA {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		/*
+		ArrayList <Integer>list=new ArrayList<Integer>();
+		for(int i=0;i<20;i++)
+		{
+			list.add(i);
+		}
+		*/
+		
 		Util tool=new Util();
-		SA test=new SA(1000,0.9);
-		test.city=tool.ReadFile("E://a280.tsp");
+		SA test=new SA(1000000,0.95);
+
+		test.city=tool.ReadFile("E://att48.tsp");
 		test.CityNum=test.city.length;
+		//test.Best("E://att48.opt.tour");
+		double  mean=Double.MAX_VALUE;
+		for(int i=0;i<1;i++)
+		{
+		test.T=100000;
+		test.Speed=0.95;
 		test.Initi();
 		test.TspAS();
-		test.Best("E://a280.opt.tour");
+		if(test.dis<mean)
+        mean=test.dis;
+		test.solution.clear();
 		
-		System.out.println(test.solution);
-		System.out.print(test.dis);
+		
+		
+		}
+		System.out.println("当前代价"+mean+" "+"差值"+(mean-test.Best("E://att48.opt.tour")));
+	
 	}
 
 }

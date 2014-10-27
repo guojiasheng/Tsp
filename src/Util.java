@@ -22,8 +22,11 @@ public class Util {
 				reader.readLine();
 				if (i == 2) {
 					tempString = reader.readLine();
+					
+					int index=tempString.indexOf(":");
+					
 					String DIMENSION = tempString.substring(
-							tempString.length() - 3, tempString.length());
+							index+2, tempString.length());
 					point = new CityPoint[Integer.valueOf(DIMENSION)]; // 城市个数
 				}
 			}
@@ -73,6 +76,7 @@ public class Util {
 		try {
 			reader = new BufferedReader(new FileReader(file));
 				String	tempString= "";
+				 reader.readLine();
 				 reader.readLine();
 				 reader.readLine();
 				 reader.readLine();
