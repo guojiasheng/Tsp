@@ -89,6 +89,7 @@ public class Util {
 				best.add(Integer.valueOf(tempString)-1);
 			}
 			reader.close();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -122,7 +123,11 @@ public class Util {
 		// TODO Auto-generated method stub
 		String FilePath = "E://a280.tsp";
 		Util.ReadFile(FilePath);
-
+        Util test=new Util();
+       // test.GetBest("E://att48.opt.tour");
+    //    SA SA=new SA(1000,0.9);
+    // System.out.print(SA.DistanceCost(test.GetBest("E://att48.opt.tour")));
+        
 	}
 
 }
